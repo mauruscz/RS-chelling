@@ -60,10 +60,23 @@ def pick_a_cell_according_to_policy(agent,model):
 
         return model.random.choice(k_sorted_empties2richness)
     
+    if agent.policy == "poor_neighborhood":
+        empties2richness = {cell: calculate_neighborhood_richness(model, cell) for cell in empties}
+        sorted_empties2richness = sorted(empties2richness, key = lambda x: empties2richness[x], reverse = False)
+        k_sorted_empties2richness = sorted_empties2richness[:model.k]
+
+
+        return model.random.choice(k_sorted_empties2richness)
+    
     if agent.policy == "minimum_improvement":
         empties2alike_neighbors = {cell: calculate_alike_destination(model, agent, cell) for cell in empties}  #now in empties2alike_neighbors we have the number of alike neighbors for each empty cell
 
         sorted_empties2alike_neighbors = sorted(empties2alike_neighbors, key = lambda x: empties2alike_neighbors[x], reverse = False)
+
+        #in sorted_empties2alike_neighbors pick the cells that have at least model.homophily alike neighbors
+        sorted_empties2alike_neighbors = [cell for cell in sorted_empties2alike_neighbors if empties2alike_neighbors[cell] >= model.homophily]
+
+
         k_sorted_empties2alike_neighbors = sorted_empties2alike_neighbors[:model.k]
 
         #if none of the k cells have more than model.homophily alike neighbors, then return (-1, -1)
@@ -71,9 +84,9 @@ def pick_a_cell_according_to_policy(agent,model):
         #else, pick one at random in k_sorted_empties2alike_neighbors
 
         eligible_cells = [cell for cell in k_sorted_empties2alike_neighbors if empties2alike_neighbors[cell] >= model.homophily]
-
-        if not eligible_cells:
+        if len(eligible_cells) == 0:
             return (-1, -1)
+        
         else:
             return model.random.choice(eligible_cells)
 
@@ -82,6 +95,12 @@ def pick_a_cell_according_to_policy(agent,model):
         empties2alike_neighbors = {cell: calculate_alike_destination(model, agent, cell) for cell in empties}
 
         sorted_empties2alike_neighbors = sorted(empties2alike_neighbors, key = lambda x: empties2alike_neighbors[x], reverse = True)
+
+
+        #in sorted_empties2alike_neighbors pick the cells that have at least model.homophily alike neighbors
+        sorted_empties2alike_neighbors = [cell for cell in sorted_empties2alike_neighbors if empties2alike_neighbors[cell] >= model.homophily]
+
+
         k_sorted_empties2alike_neighbors = sorted_empties2alike_neighbors[:model.k]
 
         #if none of the k cells have more than model.homophily alike neighbors, then return (-1, -1)
@@ -96,19 +115,19 @@ def pick_a_cell_according_to_policy(agent,model):
             return model.random.choice(eligible_cells)
         
 
-    if agent.policy == "empty_for_longest_time":
-        #TODO
-        return (-1, -1)
+    if agent.policy == "recently_empty":
+        empties2emptiness_time = {cell: calculate_cell_emptiness_time(model, cell) for cell in empties}
+        sorted_empties2emptiness_time = sorted(empties2emptiness_time, key = lambda x: empties2emptiness_time[x], reverse = False)
+        k_sorted_empties2emptiness_time = sorted_empties2emptiness_time[:model.k]
 
+        return model.random.choice(k_sorted_empties2emptiness_time)
 
+    if agent.policy == "recently_occupied":
+        empties2emptiness_time = {cell: calculate_cell_emptiness_time(model, cell) for cell in empties}
+        sorted_empties2emptiness_time = sorted(empties2emptiness_time, key = lambda x: empties2emptiness_time[x], reverse = True)
+        k_sorted_empties2emptiness_time = sorted_empties2emptiness_time[:model.k]
 
-    #OTHER POLICIES:
-    # place that was empty for the longest time
-    # place that was empty for the shortest time
-    # place that was empty for the longest time and is close to the agent
-    # place that was empty for the shortest time and is close to the agent
-
-    
+        return model.random.choice(k_sorted_empties2emptiness_time)
 
     return (-1, -1)
 

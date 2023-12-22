@@ -61,7 +61,12 @@ class Schelling(mesa.Model):
         ### ---------------- ###
         #create a relevance matrix. The relevance of a cell is inverse to the distance from the center. 
         self.relevance_matrix = np.zeros((self.width, self.height))
-        self.center = (self.width/2,self.height/2)
+        #self.center = int(self.width/2,self.height/2)
+        
+        #if width and height are even, then the center is the cell at (width/2, height/2)
+        self.center = (int(self.width/2), int(self.height/2))
+
+        
         for i in range(self.width):
             for j in range(self.height):
 
@@ -81,10 +86,7 @@ class Schelling(mesa.Model):
         self.df = pd.read_csv("income_clean.csv")
         self.majority_percentage = (1-self.minority_pc) * 100
         
-        row = pick_random_row(self.df)
-        income = pick_random_amount(self.df,row)
-        
-        
+
 
         ### AGENT PLACING ###
         ### ---------------- ###
@@ -142,8 +144,8 @@ class Schelling(mesa.Model):
         self.datacollector.collect(self)
 
         
-        #if self.happy == self.schedule.get_agent_count():
-            #self.running = False
-
-        if self.happy / self.schedule.get_agent_count() > 0.97:
+        if self.happy == self.schedule.get_agent_count():
             self.running = False
+
+        #if self.happy / self.schedule.get_agent_count() >= 0.99:
+            #self.running = False
