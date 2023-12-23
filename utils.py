@@ -71,6 +71,17 @@ def calculate_cell_emptiness_time(model, empty_cell):
         
     return empty_time
 
+def calculate_empty_surrounded(model, empty_cell):
+    """
+    - Calculate the number of empty cells that surround the empty_cell
+    """
+    empty_surrounded = 0
+
+    for neighbor in model.grid.iter_neighborhood(empty_cell, moore=True):
+        if model.grid.is_cell_empty(neighbor):
+            empty_surrounded += 1
+
+    return empty_surrounded
 
 
 #pick a random row with a probability equal to the percent column

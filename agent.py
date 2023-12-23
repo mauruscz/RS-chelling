@@ -16,7 +16,7 @@ def pick_a_cell_according_to_policy(agent,model):
     
     selected_cell = (-1, -1)
 
-    if agent.policy not in ["random", "distance", "relevance", "distance_relevance", "rich_neighborhood", "poor_neighborhood", "minimum_improvement", "maximum_improvement", "recently_emptied", "historically_emptied"]:
+    if agent.policy not in ["random", "distance", "relevance", "distance_relevance", "rich_neighborhood", "poor_neighborhood", "minimum_improvement", "maximum_improvement", "recently_emptied", "historically_emptied", "empty_surrounded"]:
         raise Exception("Policy not recognized")
 
     if agent.policy == "random":
@@ -85,6 +85,12 @@ def pick_a_cell_according_to_policy(agent,model):
         empties2emptiness_time = {cell: calculate_cell_emptiness_time(model, cell) for cell in empties}
       
         selected_cell = model.random.choices(list(empties2emptiness_time.keys()), weights=empties2emptiness_time.values())[0]
+
+    if agent.policy == "empty_surrounded":
+        empties2empties = {cell: calculate_empty_surrounded(model, cell) for cell in empties}
+
+        selected_cell = model.random.choices(list(empties2empties.keys()), weights=empties2empties.values())[0]
+
 
 
 

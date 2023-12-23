@@ -128,7 +128,7 @@ class Schelling(mesa.Model):
         """
         Run one step of the model. If All agents are happy, halt the model.
         """
-        print("step", self.schedule.steps)
+        #print("step", self.schedule.steps)
         self.happy = 0  # Reset counter of happy agents
 
         self.schedule.step()
