@@ -31,7 +31,7 @@ class Schelling(mesa.Model):
     Model class for the Schelling segregation model.
     """
 
-    def __init__(self, width=20, height=20, density=0.8, minority_pc=0.4, homophily=3, seed = None, policy = "classical", k = 5, follow_policy = 1.0):
+    def __init__(self, width=20, height=20, density=0.8, minority_pc=0.4, homophily=3, seed = None, policy = "classical",  follow_policy = 1.0):
         """ """
 
         self.width = width
@@ -45,14 +45,12 @@ class Schelling(mesa.Model):
         self.seed = seed
 
         self.policy = policy
-        self.k = k
         self.follow_policy = follow_policy
 
 
         self.happy = 0
         self.datacollector = mesa.DataCollector(
-            model_reporters = {"perc_happy": "perc_happy", "segregation": get_segregation },  
-            agent_reporters = {"x": lambda a: a.pos[0], "y": lambda a: a.pos[1]},
+            model_reporters = {"perc_happy": "perc_happy", "segregation": get_segregation }  
         )
 
 
@@ -77,7 +75,7 @@ class Schelling(mesa.Model):
                     d = get_distance((i,j), self.center)
                     self.relevance_matrix[i][j] = 1 / (sqrt(d))
 
-        print(self.relevance_matrix)
+        #print(self.relevance_matrix)
 
         ### DF reading ###
         ### ---------------- ###
@@ -107,7 +105,7 @@ class Schelling(mesa.Model):
 
 
     
-                agent_policy = None
+                agent_policy = "random"
                 if self.random.random() < self.follow_policy:
                     agent_policy = self.policy
 

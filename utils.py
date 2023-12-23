@@ -60,7 +60,7 @@ def calculate_cell_emptiness_time(model, empty_cell):
     - Calculate the time that the empty_cell has been empty. 
     Do it using the model.cell_occupancy_matrix_array that contains, per each step, the list of agents in each cell of the grid.
     """
-    empty_time = 0
+    empty_time = 1 #so that the minimum is 1
 
     #iterate reveresly over the matrices in model.cell_occupancy_matrix_array
     for i in range(len(model.cell_occupancy_matrix_array)-1, -1, -1):
@@ -79,7 +79,8 @@ def pick_random_row(df, percent_cumul_limit_low = 0, percent_cumul_limit_high = 
     df1 = df[(df["percent_cumul"] >= percent_cumul_limit_low) & (df["percent_cumul"] <= percent_cumul_limit_high)]
 
     #df1["percent"] now not sums to 100. make it so in df1
-    df1["percent"] = df1["percent"]/(df1["percent"].sum())
+    total_percent = df1["percent"].sum()
+    df1.loc[:, "percent"] = df1["percent"] / total_percent
 
     #print(df1)
     return np.random.choice(df1.index, p = df1["percent"])
