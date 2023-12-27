@@ -10,7 +10,7 @@ fixed_params = {
     'width': 50,
     'height': 50,
     'density': 0.75,
-    'minority_pc': 0.4,
+    'minority_pc': 0.3,
     'homophily': 3,
 }
 
@@ -38,4 +38,4 @@ results = batch_run(
 
 results_df = pd.DataFrame(results)
 
-results_df.to_csv("results.csv", index=False)
+results_df.to_csv("results-30minority.csv", index=False)
