@@ -14,15 +14,16 @@ def get_distance (cell1, cell2):
 def calculate_cell_occupancy_matrix(model):
     """
     - Calculate the occupancy of each cell in the grid
-    - Return a matrix of the same size as the grid, where each cell contains the list of agents that occupy that cell
+    - Return a matrix of the same size as the grid, where each cell contains -1 if it is empty, or the type of the agent occupying it
     """
 
-    cell_occupancy_matrix = [[[] for _ in range(model.height)] for _ in range(model.width)]
-    
-    for agent in model.schedule.agents:
-        cell_occupancy_matrix[agent.pos[0]][agent.pos[1]].append(agent.type)
+    occupancy_matrix = np.zeros((model.width, model.height)) -1
 
-    return cell_occupancy_matrix
+    for agent in model.schedule.agents:
+        occupancy_matrix[agent.pos[0]][agent.pos[1]] = agent.type
+
+    return occupancy_matrix
+
 
 def calculate_neighborhood_richness(model, cell):
     """
@@ -35,7 +36,7 @@ def calculate_neighborhood_richness(model, cell):
         richness += neighbor.income
     
     if len(neighbors) == 0:
-        richness = 2000
+        richness = 100000000
     else:
         richness = richness / len(neighbors)
 
@@ -55,19 +56,42 @@ def calculate_alike_destination(model, agent, empty_cell):
         
     return alike_neighbors
 
+
+
+#return a measure of similarity between the neighborhood richness of the agent and the neighborhood richness of the empty_cell
+#must be inversely proportional to the difference between the two
+
+def calculate_alike_neighborhood_composition(model, agent, empty_cell):
+    neighborhood_richness_mean = calculate_neighborhood_richness(model, agent.pos)
+
+    neighborhood_richness_mean_empty = calculate_neighborhood_richness(model, empty_cell)
+
+    return 1 /  ( (abs(neighborhood_richness_mean - neighborhood_richness_mean_empty)+100)   ) **2
+
+def calculate_different_destination(model, agent, empty_cell):
+
+    neighborhood_richness_mean = calculate_neighborhood_richness(model, agent.pos)
+
+    neighborhood_richness_mean_empty = calculate_neighborhood_richness(model, empty_cell)
+
+    return abs(neighborhood_richness_mean - neighborhood_richness_mean_empty)**2
+
+
 def calculate_cell_emptiness_time(model, empty_cell):
     """
     - Calculate the time that the empty_cell has been empty. 
-    Do it using the model.cell_occupancy_matrix_array that contains, per each step, the list of agents in each cell of the grid.
+    Do it using the model.cell_occupancy_matrix_array that contains, per each step, the agent in each cell.
     """
-    empty_time = 1 #so that the minimum is 1
+    empty_time = 1 #so that the minimum is 1+
+
 
     #iterate reveresly over the matrices in model.cell_occupancy_matrix_array
     for i in range(len(model.cell_occupancy_matrix_array)-1, -1, -1):
-        if len(model.cell_occupancy_matrix_array[i][empty_cell[0]][empty_cell[1]]) == 0:
+        if model.cell_occupancy_matrix_array[i][empty_cell[0]][empty_cell[1]] == -1:
             empty_time += 1
         else:
             break
+    
         
     return empty_time
 
@@ -99,4 +123,6 @@ def pick_random_row(df, percent_cumul_limit_low = 0, percent_cumul_limit_high = 
 #pick a random amount between the lower and upper bound of a row picked with pick_random_row
 def pick_random_amount(df, row):
     return np.random.uniform(df["bound_low"][row], df["bound_high"][row])
+
+
 

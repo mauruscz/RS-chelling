@@ -31,7 +31,7 @@ class Schelling(mesa.Model):
     Model class for the Schelling segregation model.
     """
 
-    def __init__(self, width=20, height=20, density=0.8, minority_pc=0.4, homophily=3, seed = None, policy = "classical",  follow_policy = 1.0):
+    def __init__(self, width=20, height=20, density=0.8, minority_pc=0.4, k = 30, homophily=3, seed = None, policy = "classical",  follow_policy = 1.0):
         """ """
 
         self.width = width
@@ -46,7 +46,9 @@ class Schelling(mesa.Model):
 
         self.policy = policy
         self.follow_policy = follow_policy
-
+        total_cell  = (self.width * self.height) * self.density
+        #self.k = int(total_cell * 0.1) #10% of the cells
+        self.k = k
 
         self.happy = 0
         self.datacollector = mesa.DataCollector(
@@ -73,7 +75,7 @@ class Schelling(mesa.Model):
 
                 else: 
                     d = get_distance((i,j), self.center)
-                    self.relevance_matrix[i][j] = 1 / (sqrt(d))
+                    self.relevance_matrix[i][j] = 1 / (sqrt(d)  )
 
         #print(self.relevance_matrix)
 
@@ -136,7 +138,7 @@ class Schelling(mesa.Model):
 
         self.perc_happy = self.happy / self.schedule.get_agent_count()
 
-        self.cell_occupancy_matrix_array.append(self.cell_occupancy_matrix)
+        self.cell_occupancy_matrix_array.append(calculate_cell_occupancy_matrix(self))
 
 
         self.datacollector.collect(self)
