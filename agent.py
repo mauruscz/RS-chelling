@@ -91,6 +91,9 @@ def pick_a_cell_according_to_policy(agent,model):
                                             for cell in empties 
                                                 if empties2alike_neighbors[cell] >= model.homophily} #now in empties2alike_neighbors_filtered we have the number of alike neighbors for each empty cell that have at least model.homophily alike neighbors
 
+        if len(empties2alike_neighbors_filtered) == 0:
+            return agent.pos #if there are no cells with at least model.homophily alike neighbors, then the agent stays in the same cell
+
 
         #sort the dictionary by value
         empties2alike_neighbors_filtered = dict(sorted(empties2alike_neighbors_filtered.items(), key=lambda item: item[1], reverse=True))
@@ -98,6 +101,7 @@ def pick_a_cell_according_to_policy(agent,model):
         #pick the first k cells
         empties2alike_neighbors_filtered = dict(list(empties2alike_neighbors_filtered.items())[:model.k])
 
+        #print(empties2alike_neighbors_filtered)
         selected_cell = model.random.choices(list(empties2alike_neighbors_filtered.keys()), weights=empties2alike_neighbors_filtered.values())[0]
 
 
@@ -106,7 +110,9 @@ def pick_a_cell_according_to_policy(agent,model):
         empties2alike_neighbors_filtered = {cell: empties2alike_neighbors[cell] 
                                             for cell in empties 
                                                 if empties2alike_neighbors[cell] >= model.homophily} #now in empties2alike_neighbors_filtered we have the number of alike neighbors for each empty cell that have at least model.homophily alike neighbors
-
+    
+        if len(empties2alike_neighbors_filtered) == 0:
+            return agent.pos #if there are no cells with at least model.homophily alike neighbors, then the agent stays in the same cell
 
         #sort the dictionary by value
         empties2alike_neighbors_filtered = dict(sorted(empties2alike_neighbors_filtered.items(), key=lambda item: item[1], reverse=True))
@@ -201,7 +207,6 @@ class SchellingAgent(mesa.Agent):
 
     def step(self):
         similar = sum(1 for neighbor in self.model.grid.iter_neighbors(self.pos, moore=True, include_center=False) if neighbor.type == self.type)
-
         # If unhappy, move:
         if similar < self.model.homophily:
             selected_cell = pick_a_cell_according_to_policy(self, self.model)

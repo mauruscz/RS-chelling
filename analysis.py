@@ -10,14 +10,14 @@ fixed_params = {
     'width': 50,
     'height': 50,
     'density': 0.75,
-    'minority_pc': 0.3,
+    'minority_pc': 0.4,
     'homophily': 3,
 }
 
 #policies = ["random", "distance", "relevance", "distance_relevance", "rich_neighborhood", "poor_neighborhood", "minimum_improvement", "maximum_improvement", "recently_emptied", "historically_emptied" ]
 
-policies = ["random", "distance_relevance", "rich_neighborhood", 
-            "minimum_improvement", "maximum_improvement", "recently_emptied", 
+policies = ["random", "distance_relevance", 
+            "minimum_improvement", "recently_emptied", 
             "similar_neighborhood", "different_neighborhood" ]
 
 percentages = [i / 10 for i in range(0,11)]
@@ -38,4 +38,4 @@ results = batch_run(
 
 results_df = pd.DataFrame(results)
 
-results_df.to_csv("results-30minority.csv", index=False)
+results_df.to_csv("results.csv", index=False)
