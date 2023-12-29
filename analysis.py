@@ -20,6 +20,10 @@ policies = ["random", "distance_relevance",
             "minimum_improvement", "recently_emptied", 
             "similar_neighborhood", "different_neighborhood" ]
 
+policies = ["similar_neighborhood", "maximum_improvement" ]
+
+
+
 percentages = [i / 10 for i in range(0,11)]
 
 variable_parms = {"policy": policies, "follow_policy": percentages}
@@ -38,4 +42,4 @@ results = batch_run(
 
 results_df = pd.DataFrame(results)
 
-results_df.to_csv("results.csv", index=False)
+results_df.to_csv("results_similarity.csv", index=False)

@@ -37,7 +37,6 @@ def pick_a_cell_according_to_policy(agent,model):
         empties2distances = dict(list(empties2distances.items())[:model.k])
 
 
-
         selected_cell = model.random.choices(list(empties2distances.keys()), weights=empties2distances.values())[0]
 
 
