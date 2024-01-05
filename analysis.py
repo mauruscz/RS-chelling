@@ -20,9 +20,9 @@ policies = ["random", "distance_relevance",
             "minimum_improvement", "recently_emptied", 
             "similar_neighborhood", "different_neighborhood", "maximum_improvement" ]
 
-policies = ["similar_neighborhood", "maximum_improvement" ]
+#policies = ["similar_neighborhood", "maximum_improvement" ]
 
-policies = ["similar_neighborhood", "different_neighborhood" ]
+#policies = ["similar_neighborhood", "different_neighborhood" ]
 
 #policies = ["similar_neighborhood"]
 
@@ -33,17 +33,17 @@ percentages = [i / 10 for i in range(0,11)]
 variable_parms = {"policy": policies, "follow_policy": percentages}
 
 merged_params = {**fixed_params, **variable_parms}
-merged_params 
+
 pd.options.mode.chained_assignment = None
 
 results = batch_run(
     Schelling,
     parameters = merged_params,
-    iterations=100,
-    max_steps=500,
+    iterations=10,
+    max_steps=300,
     number_processes = None
 );
 
 results_df = pd.DataFrame(results)
 
-results_df.to_csv("results_neighborhood.csv", index=False)
+results_df.to_csv("results.csv", index=False)
