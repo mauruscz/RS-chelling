@@ -102,34 +102,6 @@ def pick_a_cell_according_to_policy(agent,model):
 
 
 
-
-
-    if agent.policy == "distance": 
-        empties2distances = {cell: 1/(get_distance(pos, cell)**2) for cell in empties}
-
-        #sort the dictionary by value
-        empties2distances = dict(sorted(empties2distances.items(), key=lambda item: item[1], reverse=True))
-
-        #pick the first k cells
-        empties2distances = dict(list(empties2distances.items())[:model.k])
-
-
-        selected_cell = model.random.choices(list(empties2distances.keys()), weights=empties2distances.values())[0]
-
-
-    
-    if agent.policy == "relevance": 
-        empties2relevances = {cell: (model.relevance_matrix[cell[0]][cell[1]])**2 for cell in empties}
-
-        #sort the dictionary by value
-        empties2relevances = dict(sorted(empties2relevances.items(), key=lambda item: item[1], reverse=True))
-
-        #pick the first k cells
-        empties2relevances = dict(list(empties2relevances.items())[:model.k])
-
-        
-        selected_cell = model.random.choices(list(empties2relevances.keys()), weights=empties2relevances.values())[0]
-
     
     if agent.policy == "distance_relevance":
         empties2distances = {cell: 1/(get_distance(pos, cell)**2) for cell in empties}

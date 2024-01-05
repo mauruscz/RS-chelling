@@ -24,6 +24,10 @@ policies = ["similar_neighborhood", "maximum_improvement" ]
 
 policies = ["similar_neighborhood", "different_neighborhood" ]
 
+#policies = ["similar_neighborhood"]
+
+
+
 percentages = [i / 10 for i in range(0,11)]
 
 variable_parms = {"policy": policies, "follow_policy": percentages}
@@ -36,7 +40,7 @@ results = batch_run(
     Schelling,
     parameters = merged_params,
     iterations=100,
-    max_steps=300,
+    max_steps=500,
     number_processes = None
 );
 

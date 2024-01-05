@@ -66,10 +66,8 @@ def calculate_alike_destination_richness(model, agent, empty_cell):
 
     neighborhood_richness_mean_empty = calculate_neighborhood_richness(model, empty_cell)
 
-    if neighborhood_richness_mean_empty == neighborhood_richness_mean:
-        return 1
-    else:
-        return 1 /  abs(neighborhood_richness_mean - neighborhood_richness_mean_empty)
+
+    return 1 /  (abs(neighborhood_richness_mean - neighborhood_richness_mean_empty) +1)
 
 def calculate_different_destination_richness(model, agent, empty_cell):
 
@@ -77,7 +75,7 @@ def calculate_different_destination_richness(model, agent, empty_cell):
 
     neighborhood_richness_mean_empty = calculate_neighborhood_richness(model, empty_cell)
 
-    return abs(neighborhood_richness_mean - neighborhood_richness_mean_empty)
+    return abs(neighborhood_richness_mean - neighborhood_richness_mean_empty) +1 
 
 
 def calculate_cell_emptiness_time(model, empty_cell):
