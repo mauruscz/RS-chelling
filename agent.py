@@ -27,6 +27,83 @@ def pick_a_cell_according_to_policy(agent,model):
         # pick a random empty cell
         selected_cell =  model.random.choice(empties)
 
+
+
+
+    if agent.policy == "minimum_improvement":
+        empties2alike_neighbors = {cell: calculate_alike_destination(model, agent, cell) for cell in empties}
+        #filter out the keys with value <= 0 (no neighbors of the same type) or <model.homophily (no improvement)
+        empties2alike_neighbors_filtered = {cell: 1/(empties2alike_neighbors[cell]) 
+                                            for cell in empties 
+                                                if empties2alike_neighbors[cell] >= model.homophily} #now in empties2alike_neighbors_filtered we have the number of alike neighbors for each empty cell that have at least model.homophily alike neighbors
+
+        if len(empties2alike_neighbors_filtered) == 0:
+            return agent.pos #if there are no cells with at least model.homophily alike neighbors, then the agent stays in the same cell
+
+
+        #sort the dictionary by value
+        empties2alike_neighbors_filtered = dict(sorted(empties2alike_neighbors_filtered.items(), key=lambda item: item[1], reverse=True))
+
+        #pick the first k cells
+        empties2alike_neighbors_filtered = dict(list(empties2alike_neighbors_filtered.items())[:model.k])
+
+        #print(empties2alike_neighbors_filtered)
+        selected_cell = model.random.choices(list(empties2alike_neighbors_filtered.keys()), weights=empties2alike_neighbors_filtered.values())[0]
+
+
+    if agent.policy == "maximum_improvement":
+        empties2alike_neighbors = {cell: calculate_alike_destination(model, agent, cell) for cell in empties}
+        empties2alike_neighbors_filtered = {cell: empties2alike_neighbors[cell] 
+                                            for cell in empties 
+                                                if empties2alike_neighbors[cell] >= model.homophily} #now in empties2alike_neighbors_filtered we have the number of alike neighbors for each empty cell that have at least model.homophily alike neighbors
+    
+        if len(empties2alike_neighbors_filtered) == 0:
+            return agent.pos #if there are no cells with at least model.homophily alike neighbors, then the agent stays in the same cell
+
+        #sort the dictionary by value
+        empties2alike_neighbors_filtered = dict(sorted(empties2alike_neighbors_filtered.items(), key=lambda item: item[1], reverse=True))
+
+        #pick the first k cells
+        empties2alike_neighbors_filtered = dict(list(empties2alike_neighbors_filtered.items())[:model.k])
+
+        selected_cell = model.random.choices(list(empties2alike_neighbors_filtered.keys()), weights=empties2alike_neighbors_filtered.values())[0]
+
+
+
+    if agent.policy == "similar_neighborhood":
+        empties2similar_neighborhood = {cell: calculate_alike_destination_richness(model, agent, cell) for cell in empties}
+
+        #sort the dictionary by value
+        empties2similar_neighborhood = dict(sorted(empties2similar_neighborhood.items(), key=lambda item: item[1], reverse=True))
+
+        #pick the first k cells
+        empties2similar_neighborhood = dict(list(empties2similar_neighborhood.items())[:model.k])
+
+
+        selected_cell = model.random.choices(list(empties2similar_neighborhood.keys()), weights=empties2similar_neighborhood.values())[0]
+
+
+    if agent.policy == "different_neighborhood":
+        empties2different_neighborhood = {cell: calculate_different_destination_richness(model, agent, cell) for cell in empties}
+
+        #sort the dictionary by value
+        empties2different_neighborhood = dict(sorted(empties2different_neighborhood.items(), key=lambda item: item[1], reverse=True))
+
+        #pick the first k cells
+        empties2different_neighborhood = dict(list(empties2different_neighborhood.items())[:model.k])
+
+
+        selected_cell = model.random.choices(list(empties2different_neighborhood.keys()), weights=empties2different_neighborhood.values())[0]
+
+
+
+
+
+
+
+
+
+
     if agent.policy == "distance": 
         empties2distances = {cell: 1/(get_distance(pos, cell)**2) for cell in empties}
 
@@ -83,43 +160,7 @@ def pick_a_cell_according_to_policy(agent,model):
 
 
     
-    if agent.policy == "minimum_improvement":
-        empties2alike_neighbors = {cell: calculate_alike_destination(model, agent, cell) for cell in empties}
-        #filter out the keys with value <= 0 (no neighbors of the same type) or <model.homophily (no improvement)
-        empties2alike_neighbors_filtered = {cell: 1/(empties2alike_neighbors[cell]) 
-                                            for cell in empties 
-                                                if empties2alike_neighbors[cell] >= model.homophily} #now in empties2alike_neighbors_filtered we have the number of alike neighbors for each empty cell that have at least model.homophily alike neighbors
 
-        if len(empties2alike_neighbors_filtered) == 0:
-            return agent.pos #if there are no cells with at least model.homophily alike neighbors, then the agent stays in the same cell
-
-
-        #sort the dictionary by value
-        empties2alike_neighbors_filtered = dict(sorted(empties2alike_neighbors_filtered.items(), key=lambda item: item[1], reverse=True))
-
-        #pick the first k cells
-        empties2alike_neighbors_filtered = dict(list(empties2alike_neighbors_filtered.items())[:model.k])
-
-        #print(empties2alike_neighbors_filtered)
-        selected_cell = model.random.choices(list(empties2alike_neighbors_filtered.keys()), weights=empties2alike_neighbors_filtered.values())[0]
-
-
-    if agent.policy == "maximum_improvement":
-        empties2alike_neighbors = {cell: calculate_alike_destination(model, agent, cell) for cell in empties}
-        empties2alike_neighbors_filtered = {cell: empties2alike_neighbors[cell] 
-                                            for cell in empties 
-                                                if empties2alike_neighbors[cell] >= model.homophily} #now in empties2alike_neighbors_filtered we have the number of alike neighbors for each empty cell that have at least model.homophily alike neighbors
-    
-        if len(empties2alike_neighbors_filtered) == 0:
-            return agent.pos #if there are no cells with at least model.homophily alike neighbors, then the agent stays in the same cell
-
-        #sort the dictionary by value
-        empties2alike_neighbors_filtered = dict(sorted(empties2alike_neighbors_filtered.items(), key=lambda item: item[1], reverse=True))
-
-        #pick the first k cells
-        empties2alike_neighbors_filtered = dict(list(empties2alike_neighbors_filtered.items())[:model.k])
-
-        selected_cell = model.random.choices(list(empties2alike_neighbors_filtered.keys()), weights=empties2alike_neighbors_filtered.values())[0]
         
 
     if agent.policy == "recently_emptied":
@@ -158,31 +199,6 @@ def pick_a_cell_according_to_policy(agent,model):
 
         selected_cell = model.random.choices(list(empties2empties.keys()), weights=empties2empties.values())[0]
 
-
-    if agent.policy == "similar_neighborhood":
-        empties2similar_neighborhood = {cell: calculate_alike_destination(model, agent, cell) for cell in empties}
-
-        #sort the dictionary by value
-        empties2similar_neighborhood = dict(sorted(empties2similar_neighborhood.items(), key=lambda item: item[1], reverse=True))
-
-        #pick the first k cells
-        empties2similar_neighborhood = dict(list(empties2similar_neighborhood.items())[:model.k])
-
-
-        selected_cell = model.random.choices(list(empties2similar_neighborhood.keys()), weights=empties2similar_neighborhood.values())[0]
-
-
-    if agent.policy == "different_neighborhood":
-        empties2different_neighborhood = {cell: calculate_different_destination(model, agent, cell) for cell in empties}
-
-        #sort the dictionary by value
-        empties2different_neighborhood = dict(sorted(empties2different_neighborhood.items(), key=lambda item: item[1], reverse=True))
-
-        #pick the first k cells
-        empties2different_neighborhood = dict(list(empties2different_neighborhood.items())[:model.k])
-
-
-        selected_cell = model.random.choices(list(empties2different_neighborhood.keys()), weights=empties2different_neighborhood.values())[0]
 
 
 

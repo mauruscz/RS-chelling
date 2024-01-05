@@ -36,7 +36,7 @@ def calculate_neighborhood_richness(model, cell):
         richness += neighbor.income
     
     if len(neighbors) == 0:
-        richness = 100000000
+        richness = 0
     else:
         richness = richness / len(neighbors)
 
@@ -61,20 +61,23 @@ def calculate_alike_destination(model, agent, empty_cell):
 #return a measure of similarity between the neighborhood richness of the agent and the neighborhood richness of the empty_cell
 #must be inversely proportional to the difference between the two
 
-def calculate_alike_neighborhood_composition(model, agent, empty_cell):
+def calculate_alike_destination_richness(model, agent, empty_cell):
     neighborhood_richness_mean = calculate_neighborhood_richness(model, agent.pos)
 
     neighborhood_richness_mean_empty = calculate_neighborhood_richness(model, empty_cell)
 
-    return 1 /  ( (abs(neighborhood_richness_mean - neighborhood_richness_mean_empty)+100)   ) **2
+    if neighborhood_richness_mean_empty == neighborhood_richness_mean:
+        return 1
+    else:
+        return 1 /  abs(neighborhood_richness_mean - neighborhood_richness_mean_empty)
 
-def calculate_different_destination(model, agent, empty_cell):
+def calculate_different_destination_richness(model, agent, empty_cell):
 
     neighborhood_richness_mean = calculate_neighborhood_richness(model, agent.pos)
 
     neighborhood_richness_mean_empty = calculate_neighborhood_richness(model, empty_cell)
 
-    return abs(neighborhood_richness_mean - neighborhood_richness_mean_empty)**2
+    return abs(neighborhood_richness_mean - neighborhood_richness_mean_empty)
 
 
 def calculate_cell_emptiness_time(model, empty_cell):
