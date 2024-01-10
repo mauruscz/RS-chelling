@@ -39,7 +39,7 @@ pd.options.mode.chained_assignment = None
 results = batch_run(
     Schelling,
     parameters = merged_params,
-    iterations=10,
+    iterations=100,
     max_steps=300,
     number_processes = None
 );

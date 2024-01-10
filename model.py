@@ -144,8 +144,8 @@ class Schelling(mesa.Model):
         self.datacollector.collect(self)
 
         
-        #if self.happy == self.schedule.get_agent_count():
-            #self.running = False
-
-        if self.happy / self.schedule.get_agent_count() >= 0.95:
+        if self.happy == self.schedule.get_agent_count():
             self.running = False
+
+        #if self.happy / self.schedule.get_agent_count() >= 0.95:
+            #self.running = False
